@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.lh.dao.ResearchpapersDao">
+    
+	<sql id="researchpapersColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.author AS "author",
+		a.finishunit AS "finishunit",
+		a.finishdate AS "finishdate",
+		a.type AS "type",
+		a.create_date AS "createDate",
+		a.create_by AS "createBy.id",
+		a.update_date AS "updateDate",
+		a.update_by AS "updateBy.id",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.status AS "status",
+		a.userid AS "userid",
+		a.files AS "files"
+	</sql>
+	
+	<sql id="researchpapersJoins">
+	</sql>
+    
+	<select id="get" resultType="Researchpapers">
+		SELECT 
+			<include refid="researchpapersColumns"/>
+		FROM researchpapers a
+		<include refid="researchpapersJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Researchpapers">
+		SELECT 
+			<include refid="researchpapersColumns"/>
+		FROM researchpapers a
+		<include refid="researchpapersJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="userid != null and userid != ''">
+				AND  a.userid = #{userid}
+			</if>
+			<if test="userid == null or  userid == ''">
+				AND a.status != '0'
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE concat('%',#{name},'%')
+			</if>
+			  <if test="author != null and author != ''">
+				AND a.author LIKE concat('%',#{author},'%')
+					
+			</if> 
+			<if test="finishdate != null and finishdate != ''">
+				AND a.finishdate &lt;= #{finishdate}
+					
+			</if> 
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Researchpapers">
+		SELECT 
+			<include refid="researchpapersColumns"/>
+		FROM researchpapers a
+		<include refid="researchpapersJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO researchpapers(
+			id,
+			name,
+			author,
+			finishunit,
+			finishdate,
+			type,
+			create_date,
+			create_by,
+			update_date,
+			update_by,
+			remarks,
+			del_flag,
+			status,
+			userid,
+			files
+		) VALUES (
+			#{id},
+			#{name},
+			#{author},
+			#{finishunit},
+			#{finishdate},
+			#{type},
+			#{createDate},
+			#{createBy.id},
+			#{updateDate},
+			#{updateBy.id},
+			#{remarks},
+			#{delFlag},
+			#{status},
+			#{userid},
+			#{files}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE researchpapers SET 	
+			name = #{name},
+			author = #{author},
+			finishunit = #{finishunit},
+			finishdate = #{finishdate},
+			type = #{type},
+			update_date = #{updateDate},
+			update_by = #{updateBy.id},
+			remarks = #{remarks},
+			status = #{status},
+			userid = #{userid},
+			files = #{files}
+		WHERE id = #{id}
+	</update>
+	<update id="updateStatus">
+		UPDATE researchpapers SET status = #{status}	WHERE id = #{id}
+	</update>
+	<update id="delete">
+		UPDATE researchpapers SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

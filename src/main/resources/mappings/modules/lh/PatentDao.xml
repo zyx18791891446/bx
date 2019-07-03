@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.lh.dao.PatentDao">
+    
+	<sql id="patentColumns">
+		a.id AS "id",
+		a.uerid AS "uerid",
+		a.name AS "name",
+		a.patentnum AS "patentnum",
+		a.inventor AS "inventor",
+		a.publishunit AS "publishunit",
+		a.publishdate AS "publishdate",
+		a.status AS "status",
+		a.type AS "type",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		a.files AS "files"
+	</sql>
+	
+	<sql id="patentJoins">
+	</sql>
+    
+	<select id="get" resultType="Patent">
+		SELECT 
+			<include refid="patentColumns"/>
+		FROM patent a
+		<include refid="patentJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Patent">
+		SELECT 
+			<include refid="patentColumns"/>
+		FROM patent a
+		<include refid="patentJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			 <if test="uerid != null and uerid != ''">
+				AND  a.uerid = #{uerid}
+			</if> 
+			<if test="uerid == null or  uerid == ''">
+				AND a.status != '0'
+			</if> 
+		
+			<if test="name != null and name != ''">
+				AND a.name LIKE concat('%',#{name},'%')
+			</if>
+			  <if test="inventor != null and inventor != ''">
+				AND a.inventor LIKE concat('%',#{inventor},'%')
+					
+			</if> 
+			<if test="publishdate != null and publishdate != ''">
+				AND a.publishdate &lt;= #{publishdate}
+					
+			</if> 
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- 查询所有的专利 -->
+	<select id="findLists" resultType="Patent">
+		<!-- SELECT 
+			<include refid="patentColumns"/>
+		FROM patent a
+		<include refid="patentJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL} 
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="inventor != null and inventor != ''">
+				AND a.inventor LIKE 
+					<if test="dbName == 'oracle'">'%'||#{inventor}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{inventor}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{inventor},'%')</if>
+			</if>
+			<if test="publishdate != ''">
+				AND a.publishdate &lt;= #{publishdate}
+					
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Patent">
+		SELECT 
+			<include refid="patentColumns"/>
+		FROM patent a
+		<include refid="patentJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose> -->
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO patent(
+			id,
+			uerid,
+			name,
+			patentnum,
+			inventor,
+			publishunit,
+			publishdate,
+			status,
+			type,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag,
+			files
+		) VALUES (
+			#{id},
+			#{uerid},
+			#{name},
+			#{patentnum},
+			#{inventor},
+			#{publishunit},
+			#{publishdate},
+			#{status},
+			#{type},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag},
+			#{files}
+		)
+	</insert>
+	<update id="updateStatus">
+		UPDATE patent SET 	status = #{status} WHERE id = #{id}
+	</update>
+	<update id="update">
+		UPDATE patent SET 	
+			uerid = #{uerid},
+			name = #{name},
+			patentnum = #{patentnum},
+			inventor = #{inventor},
+			publishunit = #{publishunit},
+			publishdate = #{publishdate},
+			status = #{status},
+			type = #{type},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			files = #{files}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE patent SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

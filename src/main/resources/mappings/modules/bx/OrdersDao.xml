@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.bx.dao.OrdersDao">
+    
+	<sql id="ordersColumns">
+		a.id AS "id",
+		a.user_id AS "user.id",
+		a.username AS "username",
+		a.content AS "content",
+		a.datetimes AS "datetimes",
+		a.addres AS "addres",
+		a.status AS "status",
+		a.room_num AS "roomNum",
+		a.createdate AS "createDate",
+		a.updatedate AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.createby AS "createBy.id",
+		a.updateby AS "updateBy.id",
+		a.files AS "files"
+	</sql>
+	
+	<sql id="ordersJoins">
+	<!-- 	LEFT JOIN sys_user u2 ON u2.id = a.user_id -->
+	</sql>
+    
+	<select id="get" resultType="Orders">
+		SELECT 
+			<include refid="ordersColumns"/>
+		FROM orders a
+		<include refid="ordersJoins"/>
+		WHERE a.id = #{id}
+	</select>
+		<!-- 维修工人查询自己的完成的项目 -->
+		<select id="getRepairOrders" resultType="Orders">
+			SELECT 	<include refid="ordersColumns"/>,
+			s.repair_ID, 
+			s.user_ID
+			FROM 
+			orders a  JOIN  selectworker  s ON a.id = s.repair_ID
+			<where>
+			 s.user_ID = #{user.id} and a.del_flag = #{DEL_FLAG_NORMAL}
+			
+			<if test="username != null and username != ''">
+				AND a.username LIKE concat('%',#{username},'%')
+			</if>
+			
+			<if test="createDate != null and createDate != ''">
+				AND a.createdate &gt;= #{createDate}
+			</if>
+			<if test="updateDate != null and updateDate != ''">
+				AND a.createdate &lt;= #{updateDate}
+			</if>
+			
+			
+		</where> 
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		</select>
+	
+	<select id="findList" resultType="Orders">
+		SELECT 
+			<include refid="ordersColumns"/>
+		FROM orders a
+		<include refid="ordersJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			 <if test="user != null">
+				AND  a.user_id = #{user.id}
+			</if> 
+			<if test="user == null">
+				AND a.status != '0'
+			</if> 
+			<if test="username != null and username != ''">
+				AND a.username LIKE concat('%',#{username},'%')
+			</if>
+			
+			<if test="createDate != null and createDate != ''">
+				AND a.createdate &gt;= #{createDate}
+			</if>
+			<if test="updateDate != null and updateDate != ''">
+				AND a.createdate &lt;= #{updateDate}
+			</if>
+			
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="getRepairMan" resultType="Orders">
+	SELECT 
+		<include refid="ordersColumns"/>,
+		s.ID,
+		s.repair_ID,
+		s.user_ID,
+		u.id AS "repairManId",
+		u.NAME AS "repairMan"
+		FROM
+			orders a
+			LEFT JOIN selectworker s ON a.id = s.repair_ID
+			LEFT JOIN sys_user u ON u.id = s.user_ID 
+			WHERE a.id = #{id}
+
+
+
+
+
+</select>
+	
+	<select id="findAllList" resultType="Orders">
+		SELECT 
+			<include refid="ordersColumns"/>
+		FROM orders a
+		<include refid="ordersJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO orders(
+			id,
+			user_id,
+			username,
+			content,
+			datetimes,
+			addres,
+			status,
+			room_num,
+			createdate,
+			updatedate,
+			del_flag,
+			createby,
+			updateby,
+			files
+		) VALUES (
+			#{id},
+			#{user.id},
+			#{username},
+			#{content},
+			#{datetimes},
+			#{addres},
+			#{status},
+			#{roomNum},
+			#{createDate},
+			#{updateDate},
+			#{delFlag},
+			#{createBy.id},
+			#{updateBy.id},
+			#{files}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE orders SET 	
+			
+			content = #{content},
+			datetimes = #{datetimes},
+			addres = #{addres},
+			status = #{status},
+			room_num = #{roomNum},
+			createdate = #{createDate},
+			updatedate = #{updateDate},
+			createby = #{createBy.id},
+			updateby = #{updateBy.id},
+			files = #{files}
+		WHERE id = #{id} 
+	</update>
+	
+	
+	<update id="updateStatus">
+		UPDATE orders SET status = #{status}  WHERE id = #{id} 
+	</update>
+	
+	<update id="delete">
+		UPDATE orders SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ty.dao.AccessoryDao">
+    
+	<sql id="accessoryColumns">
+		a.id AS "id",
+		a.declare_id AS "declareId",
+		a.filepath AS "filepath"
+	</sql>
+	
+	<sql id="accessoryJoins">
+	</sql>
+    
+	<select id="get" resultType="Accessory">
+		SELECT 
+			<include refid="accessoryColumns"/>
+		FROM oa_accessory a
+		<include refid="accessoryJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Accessory">
+		SELECT 
+			<include refid="accessoryColumns"/>
+		FROM oa_accessory a
+		<include refid="accessoryJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Accessory">
+		SELECT 
+			<include refid="accessoryColumns"/>
+		FROM oa_accessory a
+		<include refid="accessoryJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_accessory(
+			id,
+			declare_id,
+			filepath
+		) VALUES (
+			#{id},
+			#{declareId},
+			#{filepath}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_accessory SET 	
+			declare_id = #{declareId},
+			filepath = #{filepath}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM oa_accessory
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

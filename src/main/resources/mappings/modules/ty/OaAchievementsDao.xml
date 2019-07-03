@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ty.dao.OaAchievementsDao">
+    
+	<sql id="oaAchievementsColumns">
+		a.id AS "id",
+		a.project_id AS "projectId",
+		a.content AS "content",
+		a.achievements_date AS "achievementsDate",
+		a.achievements_files AS "achievementsFiles"
+	</sql>
+	
+	<sql id="oaAchievementsJoins">
+	</sql>
+    
+	<select id="get" resultType="OaAchievements">
+		SELECT 
+			<include refid="oaAchievementsColumns"/>
+		FROM oa_achievements a
+		<include refid="oaAchievementsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OaAchievements">
+		SELECT 
+			<include refid="oaAchievementsColumns"/>
+		FROM oa_achievements a
+		<include refid="oaAchievementsJoins"/>
+		<where>
+			a.project_id = #{projectId}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+
+	
+	<select id="findAllList" resultType="OaAchievements">
+		SELECT 
+			<include refid="oaAchievementsColumns"/>
+		FROM oa_achievements a
+		<include refid="oaAchievementsJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_achievements(
+			id,
+			project_id,
+			content,
+			achievements_date,
+			achievements_files
+		) VALUES (
+			#{id},
+			#{projectId},
+			#{content},
+			#{achievementsDate},
+			#{achievementsFiles}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_achievements SET 	
+			project_id = #{projectId},
+			content = #{content},
+			achievements_date = #{achievementsDate},
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM oa_achievements
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

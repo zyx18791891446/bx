@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ty.dao.OaProjectReviewDao">
+    
+	<sql id="oaProjectReviewColumns">
+		a.id AS "id",
+		a.project_id AS "projectId",
+		a.create_date AS "createDate",<!-- 评审时间 -->
+		a.status AS "status",<!-- 评审状态 -->
+		a.review_files AS "reviewFiles",<!--反馈文件 -->
+		a.review_advice AS "reviewAdvice"<!-- 评审意见 -->
+	</sql>
+	
+	<sql id="oaProjectReviewJoins">
+	</sql>
+    
+	<select id="get" resultType="OaProjectReview">
+		SELECT 
+			<include refid="oaProjectReviewColumns"/>
+		FROM oa_project_review a
+		<include refid="oaProjectReviewJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OaProjectReview">
+		SELECT 
+			<include refid="oaProjectReviewColumns"/>
+		FROM oa_project_review a
+		<include refid="oaProjectReviewJoins"/>
+		<where>
+			a.project_id = #{projectId}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="getExpert" resultType="OaProjectReview">
+		SELECT 	a.id AS "expert.id",
+		a.expertname AS "expert.expertname",
+		a.specialty AS "expert.specialty",
+		a.sex AS "expert.sex",
+		a.age AS "expert.age",
+		a.photo AS "expert.photo",
+		a.content AS "expert.content",
+		a.researchresult AS "expert.researchresult",
+		a.create_by AS "expert.createBy.id",
+		a.create_date AS "expert.createDate",
+		a.update_by AS "expert.updateBy.id",
+		a.update_date AS "expert.updateDate",
+		a.remarks AS "expert.remarks",
+		a.del_flag AS "expert.delFlag",
+		
+		
+		ec.oa_expertid,
+		ec.oa_project,
+		
+		b.id AS "id",
+		b.project_id AS "projectId",
+		b.review_advice AS "reviewAdvice",
+		b.status AS "status",
+		b.review_files AS "reviewFiles"
+		FROM oa_expert a   
+		JOIN oa_experts_choice ec ON a.id = ec.oa_expertid 
+		 
+		
+		JOIN  oa_project_review b ON b.project_id = ec.oa_project
+		
+		WHERE b.project_id = #{projectId}
+		ORDER BY b.status DESC
+	
+	
+	</select>
+	
+	<select id="findAllList" resultType="OaProjectReview">
+		SELECT 
+			<include refid="oaProjectReviewColumns"/>
+		FROM oa_project_review a
+		<include refid="oaProjectReviewJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_project_review(
+			id,
+			project_id,
+			create_date,
+			status,
+			review_files,
+			review_advice
+		) VALUES (
+			#{id},
+			#{projectId},
+			#{createDate},
+			#{status},
+			#{reviewFiles},
+			#{reviewAdvice}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_project_review SET 	
+			project_id = #{projectId},
+			review_advice = #{reviewAdvice},
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM oa_project_review
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

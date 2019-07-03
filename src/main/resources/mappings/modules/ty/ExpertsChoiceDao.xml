@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ty.dao.ExpertsChoiceDao">
+    
+	<sql id="expertsChoiceColumns">
+		a.oa_id AS "oaId",
+		a.oa_expertid AS "oaExpertid",
+		a.oa_project AS "oaProject"
+	</sql>
+	
+	<sql id="expertsChoiceJoins">
+	</sql>
+    
+	<select id="get" resultType="ExpertsChoice">
+		SELECT 
+			<include refid="expertsChoiceColumns"/>
+		FROM oa_experts_choice a
+		<include refid="expertsChoiceJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ExpertsChoice">
+		SELECT 
+			<include refid="expertsChoiceColumns"/>
+		FROM oa_experts_choice a
+		<include refid="expertsChoiceJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ExpertsChoice">
+		SELECT 
+			<include refid="expertsChoiceColumns"/>
+		FROM oa_experts_choice a
+		<include refid="expertsChoiceJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_experts_choice(
+			oa_id,
+			oa_expertid,
+			oa_project
+		) VALUES (
+			#{oaId},
+			#{oaExpertid},
+			#{oaProject}
+		)
+	</insert>
+	
+	 <insert id="insertByBatch" parameterType="java.util.List">
+      INSERT INTO oa_experts_choice(
+			oa_id,
+			oa_expertid,
+			oa_project)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.oaId,jdbcType=VARCHAR}, #{item.oaExpertid,jdbcType=INTEGER},#{item.oaProject,jdbcType=LONGVARCHAR})
+        </foreach>
+    </insert>
+	
+	<update id="update">
+		UPDATE oa_experts_choice SET 	
+			oa_id = #{oaId},
+			oa_expertid = #{oaExpertid},
+			oa_project = #{oaProject}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM oa_experts_choice
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

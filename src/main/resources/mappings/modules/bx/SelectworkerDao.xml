@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.bx.dao.SelectworkerDao">
+    
+	<sql id="selectworkerColumns">
+		a.id AS "id",
+		a.repair_id AS "repairId",
+		a.user_id AS "user.id",
+		u3.name AS "user.name"
+	</sql>
+	
+	<sql id="selectworkerJoins">
+		LEFT JOIN sys_user u3 ON u3.id = a.user_id
+	</sql>
+    
+	<select id="get" resultType="Selectworker">
+		SELECT 
+			<include refid="selectworkerColumns"/>
+		FROM selectworker a
+		<include refid="selectworkerJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Selectworker">
+		SELECT 
+			<include refid="selectworkerColumns"/>
+		FROM selectworker a
+		<include refid="selectworkerJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Selectworker">
+		SELECT 
+			<include refid="selectworkerColumns"/>
+		FROM selectworker a
+		<include refid="selectworkerJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO selectworker(
+			id,
+			repair_id,
+			user_id
+		) VALUES (
+			#{id},
+			#{repairId},
+			#{user.id}
+		)
+	</insert>
+	
+	 <insert id="insertByBatch" parameterType="java.util.List">
+     INSERT INTO selectworker(
+			id,
+			repair_id,
+			user_id)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id,jdbcType=VARCHAR}, #{item.repairId,jdbcType=INTEGER},#{item.user.id,jdbcType=LONGVARCHAR})
+        </foreach>
+    </insert>
+	
+	<update id="update">
+		UPDATE selectworker SET 	
+			repair_id = #{repairId},
+			user_id = #{user.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM selectworker
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

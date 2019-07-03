@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ty.dao.ChartDao">
+    
+	<select id="expense" resultType="Chart">
+		SELECT
+		g.name gname,
+		sum(a.project_fund) apfund,
+		COUNT(DISTINCT a.project_name) apname,
+		COUNT(DISTINCT b.project_id) bpname,
+		sum(h.project_fund) bpfund,
+		COUNT(c.project_id) cpname,
+		COUNT(d.project_id) dpname,
+		COUNT(e.project_id) epname
+
+		FROM oa_project_application a
+		RIGHT JOIN sys_office g ON g.id=a.office_id
+		LEFT JOIN oa_achievements b ON a.id = b.project_id
+		left JOIN oa_project_application h ON a.id = h.id and h.status_dd
+		in('4','6','7')
+		LEFT JOIN oa_project_review c ON a.id = c.project_id and c.status='5'
+		LEFT JOIN oa_project_inspection d ON a.id = d.project_id
+		AND d.status_dd='2'
+		LEFT JOIN oa_project_inspection e ON a.id = e.project_id AND
+		e.status_dd='3'
+
+		WHERE g.parent_id &gt; '0'
+		<if test="gname != null and gname != ''">
+                AND g.name like CONCAT('%',#{gname},'%') 
+            </if>
+            		<if test="createDate != null and createDate != ''">
+				AND a.create_date &gt;= #{createDate}
+			</if>
+			<if test="updateDate != null and updateDate != ''">
+				AND a.create_date &lt;= #{updateDate}
+			</if>
+		GROUP BY g.id
+	</select>
+
+	
+</mapper>
+    

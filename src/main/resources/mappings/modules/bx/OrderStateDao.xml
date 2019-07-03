@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.bx.dao.OrderStateDao">
+    
+	<sql id="orderStateColumns">
+		a.id AS "id",
+		a.username AS "username",
+		a.content AS "content",
+		a.datetimes AS "datetimes",
+		a.addres AS "addres",
+		a.status AS "status",
+		a.order_id AS "orderId"
+	</sql>
+	
+	<sql id="orderStateJoins">
+	</sql>
+    
+	<select id="get" resultType="OrderState">
+		SELECT 
+			<include refid="orderStateColumns"/>
+		FROM order_state a
+		<include refid="orderStateJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OrderState">
+		SELECT 
+			<include refid="orderStateColumns"/>
+		FROM order_state a where a.order_id = #{orderId}
+		<include refid="orderStateJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrderState">
+		SELECT 
+			<include refid="orderStateColumns"/>
+		FROM order_state a
+		<include refid="orderStateJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO order_state(
+			id,
+			username,
+			content,
+			datetimes,
+			addres,
+			status,
+			order_id
+		) VALUES (
+			#{id},
+			#{username},
+			#{content},
+			#{datetimes},
+			#{addres},
+			#{status},
+			#{orderId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE order_state SET 	
+			username = #{username},
+			content = #{content},
+			datetimes = #{datetimes},
+			addres = #{addres},
+			status = #{status}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM order_state
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

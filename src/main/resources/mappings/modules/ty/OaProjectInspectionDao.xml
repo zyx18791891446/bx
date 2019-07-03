@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ty.dao.OaProjectInspectionDao">
+    
+	<sql id="oaProjectInspectionColumns">
+		a.id AS "id",
+		a.project_id AS "projectId",
+		a.status_dd AS "statusDd",
+		a.inspection_date AS "inspectionDate",
+		a.reason AS "reason",
+		a.del_flag AS "delFlag",
+		a.inspection_files AS "inspectionFiles",
+		a.project_files AS "projectFiles"
+	</sql>
+	
+	<sql id="oaProjectInspectionJoins">
+	</sql>
+    
+	<select id="get" resultType="OaProjectInspection">
+		SELECT 
+			<include refid="oaProjectInspectionColumns"/>
+		FROM oa_project_inspection a
+		<include refid="oaProjectInspectionJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OaProjectInspection">
+		SELECT 
+			<include refid="oaProjectInspectionColumns"/>
+		FROM oa_project_inspection a
+		<include refid="oaProjectInspectionJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.project_id = #{projectId}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OaProjectInspection">
+		SELECT 
+			<include refid="oaProjectInspectionColumns"/>
+		FROM oa_project_inspection a
+		<include refid="oaProjectInspectionJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_project_inspection(
+			id,
+			project_id,
+			status_dd,
+			inspection_date,
+			reason,
+			del_flag,
+			inspection_files,
+			project_files
+		) VALUES (
+			#{id},
+			#{projectId},
+			#{statusDd},
+			#{inspectionDate},
+			#{reason},
+			#{delFlag},
+			#{inspectionFiles},
+			#{projectFiles}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_project_inspection SET 	
+			project_id = #{projectId},
+			status_dd = #{statusDd},
+			inspection_date = #{inspectionDate},
+			reason = #{reason}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE oa_project_inspection SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

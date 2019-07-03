@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.ty.dao.ExpertDao">
+    
+	<sql id="expertColumns">
+		a.id AS "id",
+		a.expertname AS "expertname",
+		a.specialty AS "specialty",
+		a.sex AS "sex",
+		a.age AS "age",
+		a.photo AS "photo",
+		a.content AS "content",
+		a.researchresult AS "researchresult",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="expertJoins">
+	</sql>
+    
+	<select id="get" resultType="Expert">
+		SELECT 
+			<include refid="expertColumns"/>
+		FROM oa_expert a
+		<include refid="expertJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<!-- 查询专家信息（包括审批的项目） -->
+	<select id="getExpert" resultType="Expert">
+	SELECT 	a.id AS "id",
+		a.expertname AS "expertname",
+		a.specialty AS "specialty",
+		a.sex AS "sex",
+		a.age AS "age",
+		a.photo AS "photo",
+		a.content AS "content",
+		a.researchresult AS "researchresult",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		a.del_flag AS "delFlag",
+		
+		opa.id AS "projectApplication.id",
+		opa.office_id AS "projectApplication.office.id",
+		opa.construction_unit AS "projectApplication.constructionUnit",
+		opa.project_name AS "projectApplication.projectName",
+		opa.project_fund AS "projectApplication.projectFund",
+		opa.status_dd AS "projectApplication.statusDd",
+		opa.fund_source AS "projectApplication.fundSource",
+		opa.apply_scope AS "projectApplication.applyScope",
+		opa.construction_mode AS "projectApplication.constructionMode",
+		opa.construction_necessity AS "projectApplication.constructionNecessity",
+		opa.achieve_aim AS "projectApplication.achieveAim",
+		opa.project_introduce AS "projectApplication.projectIntroduce",
+		opa.create_by AS "projectApplication.createBy.id",
+		opa.create_date AS "projectApplication.createDate",
+		opa.update_by AS "projectApplication.updateBy.id",
+		opa.update_date AS "projectApplication.updateDate",
+		opa.remarks AS "projectApplication.remarks",
+		opa.del_flag AS "projectApplication.delFlag"
+				
+		FROM oa_expert a   
+		JOIN oa_experts_choice ec ON a.id = ec.oa_expertid
+		JOIN  oa_project_application opa ON opa .id = ec.oa_project
+		WHERE a.id=#{id};
+			
+	
+	</select>
+	<select id="findList" resultType="Expert">
+		SELECT 
+			<include refid="expertColumns"/>
+		FROM oa_expert a
+		<include refid="expertJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="expertname != null and expertname != ''">
+			
+                AND a.expertname like CONCAT('%',#{expertname},'%') 
+            </if>
+            <if test="specialty != null and specialty != ''">
+                AND a.specialty like CONCAT('%',#{specialty},'%') 
+            </if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Expert">
+		SELECT 
+			<include refid="expertColumns"/>
+		FROM oa_expert a
+		<include refid="expertJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO oa_expert(
+			id,
+			expertname,
+			specialty,
+			sex,
+			age,
+			photo,
+			content,
+			researchresult,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			del_flag
+		) VALUES (
+			#{id},
+			#{expertname},
+			#{specialty},
+			#{sex},
+			#{age},
+			#{photo},
+			#{content},
+			#{researchresult},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE oa_expert SET 	
+			expertname = #{expertname},
+			specialty = #{specialty},
+			sex = #{sex},
+			age = #{age},
+			photo = #{photo},
+			content = #{content},
+			researchresult = #{researchresult},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE oa_expert SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
