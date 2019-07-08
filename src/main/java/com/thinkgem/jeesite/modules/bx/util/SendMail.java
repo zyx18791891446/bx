@@ -106,12 +106,6 @@ public class SendMail {
 //发送
         Transport.send(message);
     }
-    //主函数
-    public static void main(String[] args) throws AddressException, MessagingException, AuthenticationFailedException {
-//发件人的地址和密码
-        SendMail sm = new SendMail("2436726878@qq.com","zmyzpddgiaipecdc");
-//收件人地址、邮件主题、邮件内容
-        sm.send("2391795623@qq.com", "呵呵呵", "阿苏大嫂打扫得大大萨苏达！");
-    }
+
 
 }
