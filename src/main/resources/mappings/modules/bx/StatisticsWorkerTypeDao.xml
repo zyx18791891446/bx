@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.bx.dao.StatisticWorktypeDao">
+	<!--获取每个工人的工作量-->
+	<select id="getWorkerTypeCount" resultType="com.thinkgem.jeesite.modules.bx.entity.StatisticWorktype">
+SELECT
+		w.name AS workerType,
+		COUNT(*) AS totalCount
+		FROM
+		sys_user a
+		LEFT JOIN worktype AS w ON a.worker_type = w.ID
+		WHERE a.worker_type !=''
+		GROUP BY a.worker_type
+
+	</select>
+<!--获取每个工人类型维修的总数量-->
+
+	<select id="getCountByWorkType" resultType="com.thinkgem.jeesite.modules.bx.entity.StatisticWorktype">
+		SELECT 	wt.name AS name,
+	COUNT(*) AS value
+
+
+	FROM
+	bx.sys_user AS s
+	LEFT JOIN selectworker AS sw ON sw.user_ID = s.id
+	LEFT JOIN  orders AS o ON sw.repair_ID = o.id
+	RIGHT JOIN worktype AS wt ON wt.ID = s.worker_type
+	WHERE s.worker_type!=''AND o.id != ''AND o.status IN(4,5)
+	GROUP BY wt.name
+	</select>
+
+
+
+
+
+</mapper>

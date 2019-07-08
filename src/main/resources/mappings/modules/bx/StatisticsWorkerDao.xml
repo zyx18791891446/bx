@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.bx.dao.StatisticsWorkerDao">
+	<select id="staticsWoker" resultType="StatisticsWorker">
+			SELECT c.name AS name,
+					w.name AS workType,
+					COUNT(CASE WHEN STATUS=5  THEN 0  ELSE NULL END) AS finishi,
+					COUNT(CASE WHEN STATUS=4 THEN 0 ELSE NULL END) AS unfinish
+					FROM
+					sys_user AS c
+					LEFT JOIN selectworker AS b  ON b.user_ID = c.id
+					LEFT JOIN orders AS a ON a.id = b.repair_ID
+					LEFT JOIN worktype AS w ON w.id = c.worker_type
+					WHERE c.worker_type != ''
+					<if test="name != null and name != ''">
+						AND  c.name LIKE concat('%',#{name},'%')
+					</if>
+					<if test="createDate != null and createDate != ''">
+						AND a.createdate &gt;= #{createDate}
+					</if>
+					<if test="updateDate != null and updateDate != ''">
+						AND a.createdate &lt;= #{updateDate}
+					</if>
+					GROUP BY c.id
+
+
+
+
+	/*	SELECT
+		w.name AS workerType,
+		COUNT(*) AS totalCount
+		FROM
+		bx.sys_user a
+		LEFT JOIN worktype AS w ON a.worker_type = w.ID
+		WHERE a.worker_type !=''
+		GROUP BY a.worker_type*/
+
+	</select>
+
+</mapper>

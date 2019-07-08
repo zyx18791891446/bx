@@ -16,7 +16,6 @@ public class Worktype extends DataEntity<Worktype> {
 	
 	private static final long serialVersionUID = 1L;
 	private String name;		// name
-	
 	public Worktype() {
 		super();
 	}

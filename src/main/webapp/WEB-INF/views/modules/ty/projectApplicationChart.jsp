@@ -26,7 +26,7 @@ margin:	15px 10px 15px 10px;
 			});
 		});
 		</script>
-<script  src="${ctxStatic}/jquery/echarts.min.js" ">
+<script  src="${ctxStatic}/jquery/echarts.min.js" >
 
 </script>
 </head>
