@@ -101,7 +101,7 @@ public class SelectworkerService extends CrudService<SelectworkerDao, Selectwork
 		String subject = "新的维修订单";
 		String contents = "尊敬的"+user.getName()+"先生/女士，您有了一条新的维修订单，请您尽快登录系统去查看";
 		try {
-			SendMail sm = new SendMail("2436726878@qq.com","zmyzpddgiaipecdc");
+			SendMail sm = new SendMail("2436726878@qq.com","*********");
 			sm.send(recipient, subject, contents);
 		}catch (Exception e){
 			e.printStackTrace();
