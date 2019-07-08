@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.thinkgem.jeesite.modules.bx.util.SendMail;
+import com.thinkgem.jeesite.modules.sys.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,8 @@ public class SelectworkerService extends CrudService<SelectworkerDao, Selectwork
 	private OrdersDao ordersDao;
 	@Autowired
 	private OrderStateDao orderStateDao;
-	
+	@Autowired
+	private UserDao userDao;
 	public Selectworker get(String id) {
 		return super.get(id);
 	}
@@ -49,7 +52,7 @@ public class SelectworkerService extends CrudService<SelectworkerDao, Selectwork
 	}
 	/**
 	 * 选择维修工人 可能选择多个工人 
-	 * 1.选择工人表加一条记录 2.修改订单表 3.订单状态加一条记录
+	 * 1.选择工人表加一条记录 2.修改订单表 3.订单状态加一条记录 4.给维修工人发送邮件
 	 * @param selectworker
 	 * @param selectworkers
 	 */
@@ -73,10 +76,10 @@ public class SelectworkerService extends CrudService<SelectworkerDao, Selectwork
 		
 		Orders orders =  ordersDao.get(order);
 		String username = orders.getUsername();		 
-		 String content = orders.getContent();		 
-		 Date datetimes = new Date();		 
-		 String addres = orders.getAddres();		 
-		 String status = orders.getStatus();	
+		 String content = orders.getContent();
+		 Date datetimes = new Date();
+		 String addres = orders.getAddres();
+		 String status = orders.getStatus();
 		 String orderId = orders.getId();
 		 
 		 OrderState orderState = new OrderState();
@@ -90,7 +93,21 @@ public class SelectworkerService extends CrudService<SelectworkerDao, Selectwork
 		orders.setStatus("4");
 		ordersDao.updateStatus(orders);
 		orderStateDao.insert(orderState);
-		dao.insertByBatch(list); 
+		dao.insertByBatch(list);
+
+		String id = selectworkers[0];
+		User user = userDao.get(id);
+		String recipient = user.getEmail();
+		String subject = "新的维修订单";
+		String contents = "尊敬的"+user.getName()+"先生/女士，您有了一条新的维修订单，请您尽快登录系统去查看";
+		try {
+			SendMail sm = new SendMail("2436726878@qq.com","zmyzpddgiaipecdc");
+			sm.send(recipient, subject, contents);
+		}catch (Exception e){
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+
 	}
 	
 	@Transactional(readOnly = false)
