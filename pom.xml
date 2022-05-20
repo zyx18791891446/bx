@@ -586,7 +586,7 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.8.0</version>
+			<version>2.8.9</version>
 		</dependency>
 
 		<!-- 自定义jar依赖包 <dependency> <groupId>com.thinkgem.jeesite</groupId> <artifactId>test-core</artifactId> 
